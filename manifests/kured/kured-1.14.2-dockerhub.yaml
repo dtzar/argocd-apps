@@ -71,14 +71,14 @@ metadata:
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: kured            # Must match `--ds-name`
+  name: kured # Must match `--ds-name`
   namespace: kube-system # Must match `--ds-namespace`
 spec:
   selector:
     matchLabels:
       name: kured
   updateStrategy:
-   type: RollingUpdate
+    type: RollingUpdate
   template:
     metadata:
       labels:
@@ -86,18 +86,24 @@ spec:
     spec:
       serviceAccountName: kured
       tolerations:
+        - key: node-role.kubernetes.io/control-plane
+          effect: NoSchedule
         - key: node-role.kubernetes.io/master
           effect: NoSchedule
       hostPID: true # Facilitate entering the host mount namespace via init
       restartPolicy: Always
       containers:
         - name: kured
-          image: docker.io/weaveworks/kured:1.7.0
-                 # If you find yourself here wondering why there is no
-                 # :latest tag on Docker Hub,see the FAQ in the README
+          # If you find yourself here wondering why there is no
+          # :latest tag on Docker Hub,see the FAQ in the README
+          image: ghcr.io/kubereboot/kured:1.14.2
           imagePullPolicy: IfNotPresent
           securityContext:
             privileged: true # Give permission to nsenter /proc/1/ns/mnt
+            readOnlyRootFilesystem: true
+          ports:
+            - containerPort: 8080
+              name: metrics
           env:
             # Pass in the name of the node on which this pod is scheduled
             # for use with drain/uncordon operations and lock acquisition
@@ -111,6 +117,7 @@ spec:
 #            - --drain-grace-period=-1
 #            - --skip-wait-for-delete-timeout=0
 #            - --drain-timeout=0
+#            - --drain-pod-selector=""
 #            - --period=1h
 #            - --ds-namespace=kube-system
 #            - --ds-name=kured
@@ -118,6 +125,8 @@ spec:
 #            - --lock-ttl=0
 #            - --prometheus-url=http://prometheus.monitoring.svc.cluster.local
 #            - --alert-filter-regexp=^RebootRequired$
+#            - --alert-filter-match-only=false
+#            - --alert-firing-only=false
 #            - --reboot-sentinel=/var/run/reboot-required
 #            - --prefer-no-schedule-taint=""
 #            - --reboot-sentinel-command=""
@@ -126,13 +135,19 @@ spec:
 #            - --slack-channel=alerting
 #            - --notify-url="" # See also shoutrrr url format
 #            - --message-template-drain=Draining node %s
-#            - --message-template-drain=Rebooting node %s
+#            - --message-template-reboot=Rebooting node %s
+#            - --message-template-uncordon=Node %s rebooted & uncordoned successfully!
 #            - --blocking-pod-selector=runtime=long,cost=expensive
 #            - --blocking-pod-selector=name=temperamental
 #            - --blocking-pod-selector=...
 #            - --reboot-days=sun,mon,tue,wed,thu,fri,sat
+#            - --reboot-delay=90s
 #            - --start-time=0:00
 #            - --end-time=23:59:59
 #            - --time-zone=UTC
 #            - --annotate-nodes=false
 #            - --lock-release-delay=30m
+#            - --log-format=text
+#            - --metrics-host=""
+#            - --metrics-port=8080
+#            - --concurrency=1
