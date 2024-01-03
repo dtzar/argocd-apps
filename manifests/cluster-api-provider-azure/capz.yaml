@@ -17,7 +17,7 @@ spec:
     valuesObject:
       addon: "helm"
       infrastructure: "azure"
-      certmanager:
+      cert-manager:
         enabled: true
   syncPolicy:
     automated:
