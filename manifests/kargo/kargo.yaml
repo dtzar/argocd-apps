@@ -1,0 +1,33 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kargo
+  namespace: kargo
+  annotations:
+    #argocd.argoproj.io/sync-wave: "4"
+spec:
+  destination:
+    namespace: kargo
+    server: https://kubernetes.default.svc
+  project: infra
+  source:
+    chart: kargo
+    repoURL: oci://ghcr.io/akuity/kargo-charts/kargo
+    helm:
+      parameters:
+        - name: api.adminAccount.password
+          value: 'admin'
+        - name: api.adminAccount.tokenSigningKey
+          value: 'inPublicRepoNotSecretNotPublicFacing'
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+    retry:
+      limit: -1 # number of failed sync attempt retries; unlimited number of attempts if less than 0
+      backoff:
+        duration: 5s # the amount to back off. Default unit is seconds, but could also be a duration (e.g. "2m", "1h")
+        factor: 2 # a factor to multiply the base duration after each failed retry
+        maxDuration: 10m # the maximum amount of time allowed for the backoff strategy
