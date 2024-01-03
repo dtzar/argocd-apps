@@ -27,8 +27,7 @@ module "aks" {
   network_plugin                 = "kubenet"
   public_ssh_key                 = var.public_ssh_key
   vnet_subnet_id                 = azurerm_subnet.argocd.id
-  enable_log_analytics_workspace = false
-
+  rbac_aad                       = false 
 
   agents_count = var.agents_count
   agents_size  = var.agents_size
