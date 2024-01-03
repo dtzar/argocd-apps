@@ -7,7 +7,7 @@ metadata:
     #argocd.argoproj.io/sync-wave: "4"
 spec:
   destination:
-    namespace: capz-system
+    namespace: capi-operator-system
     server: https://kubernetes.default.svc
   project: infra
   source:
