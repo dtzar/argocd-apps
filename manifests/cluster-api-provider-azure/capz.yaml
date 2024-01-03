@@ -15,9 +15,9 @@ spec:
     targetRevision: 0.7.0
     repoURL: https://kubernetes-sigs.github.io/cluster-api-operator
     valuesObject:
-    - addon: "helm"
-    - infrastructure: "azure"
-    - certmanager:
+      addon: "helm"
+      infrastructure: "azure"
+      certmanager:
         enabled: true
   syncPolicy:
     automated:
