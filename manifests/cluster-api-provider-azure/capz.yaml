@@ -14,11 +14,14 @@ spec:
     chart: cluster-api-operator
     targetRevision: 0.7.0
     repoURL: https://kubernetes-sigs.github.io/cluster-api-operator
-    valuesObject:
-      addon: "helm"
-      infrastructure: "azure"
-      cert-manager:
-        enabled: true
+    helm:
+      parameters:
+        - name: cert-manager.enabled
+          value: 'true'
+        - name: addon
+          value: 'helm'
+        - name: infrastructure
+          value: 'azure'
   syncPolicy:
     automated:
       prune: true
