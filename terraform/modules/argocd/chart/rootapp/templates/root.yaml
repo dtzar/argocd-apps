@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: infaroot
+  name: infraroot
   namespace: {{ .Release.Namespace }}
 spec:
   destination:
