@@ -24,15 +24,17 @@ module "aks" {
   kubernetes_version             = var.kubernetes_version
   orchestrator_version           = var.kubernetes_version
   prefix                         = "sm"
-  network_plugin                 = "kubenet"
+  network_plugin                 = "azure"
   public_ssh_key                 = var.public_ssh_key
   vnet_subnet_id                 = azurerm_subnet.argocd.id
+  os_sku                         = "Mariner"
   rbac_aad                       = false 
 
   agents_count = var.agents_count
   agents_size  = var.agents_size
+  agents_max_pods = "100"
 
-  network_policy = "calico"
+  network_policy = "azure"
 
   depends_on = [azurerm_subnet.argocd]
 
